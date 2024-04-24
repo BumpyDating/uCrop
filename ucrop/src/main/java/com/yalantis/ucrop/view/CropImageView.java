@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import com.yalantis.ucrop.R;
 import com.yalantis.ucrop.callback.BitmapCropCallback;
 import com.yalantis.ucrop.callback.CropBoundsChangeListener;
+import com.yalantis.ucrop.callback.ConstraintChangeCallback;
 import com.yalantis.ucrop.model.CropParameters;
 import com.yalantis.ucrop.model.ImageState;
 import com.yalantis.ucrop.task.BitmapCropTask;
@@ -53,6 +54,7 @@ public class CropImageView extends TransformImageView {
     private float mMaxScale, mMinScale;
     private int mMaxResultImageSizeX = 0, mMaxResultImageSizeY = 0;
     private long mImageToWrapCropBoundsAnimDuration = DEFAULT_IMAGE_TO_CROP_BOUNDS_ANIM_DURATION;
+    private ConstraintChangeCallback mConstraintChangeCallback;
 
     public CropImageView(Context context) {
         this(context, null);
@@ -64,6 +66,10 @@ public class CropImageView extends TransformImageView {
 
     public CropImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+    }
+
+    public void setConstraintChangeCallback(ConstraintChangeCallback callback) {
+        mConstraintChangeCallback = callback;
     }
 
     /**
@@ -121,6 +127,11 @@ public class CropImageView extends TransformImageView {
                 cropRect.right - getPaddingRight(), cropRect.bottom - getPaddingBottom());
         calculateImageScaleBounds();
         setImageToWrapCropBounds();
+    }
+
+    public void setMatrix(float[] matrix) {
+        mCurrentImageMatrix.setValues(matrix);
+        setImageMatrix(mCurrentImageMatrix);
     }
 
     /**
@@ -627,4 +638,10 @@ public class CropImageView extends TransformImageView {
 
     }
 
+    protected void updateCurrentImagePoints() {
+        super.updateCurrentImagePoints();
+        final float[] matrix = new float[9];
+        mCurrentImageMatrix.getValues(matrix);
+        mConstraintChangeCallback.onConstraintsChange(matrix, mCurrentImageCorners, mCropRect, getCurrentScale());
+    }
 }

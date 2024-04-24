@@ -115,7 +115,9 @@ public class TransformImageView extends AppCompatImageView {
 
     @Override
     public void setImageBitmap(final Bitmap bitmap) {
+        mBitmapDecoded = true;
         setImageDrawable(new FastBitmapDrawable(bitmap));
+        onImageLaidOut();
     }
 
     public String getImageInputPath() {
@@ -332,7 +334,7 @@ public class TransformImageView extends AppCompatImageView {
      * {@link #mCurrentImageCorners} and {@link #mCurrentImageCenter} arrays.
      * Those are used for several calculations.
      */
-    private void updateCurrentImagePoints() {
+    protected void updateCurrentImagePoints() {
         mCurrentImageMatrix.mapPoints(mCurrentImageCorners, mInitialImageCorners);
         mCurrentImageMatrix.mapPoints(mCurrentImageCenter, mInitialImageCenter);
     }
