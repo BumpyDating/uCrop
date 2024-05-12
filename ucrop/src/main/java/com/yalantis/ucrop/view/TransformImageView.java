@@ -199,7 +199,10 @@ public class TransformImageView extends AppCompatImageView {
     public void setImageMatrix(Matrix matrix) {
         super.setImageMatrix(matrix);
         mCurrentImageMatrix.set(matrix);
-        updateCurrentImagePoints();
+        try {
+            updateCurrentImagePoints();
+        } catch (Exception ignored) {
+        }
     }
 
     @Nullable
